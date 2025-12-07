@@ -23,6 +23,11 @@ ui <- fluidPage(
                   max = 20000,
                   value = 5000),
       
+      radioButtons(inputId = "rose",
+                   label = "Colorier les points en rose ?",
+                   choices = c("Oui","Non"),
+                   selected = "Oui",
+      ),
       
       selectInput(inputId = "color",
                   label = "Choisir une couleur à filtrer :",
@@ -57,17 +62,37 @@ server <- function(input, output) {
     rv$str <- diamonds |> 
       filter(price >= input$price & color == input$color)
     
-    rv$nuage <- rv$str |>
+    rv$selection_couleur <- input$rose
+    
+    rv$nuage_noir <- rv$str |>
       ggplot(aes(x=carat, y=price)) + 
       geom_point(
         alpha = 0.5) +
       ggtitle(paste("prix:", input$price, " & color:", input$color))
     
+    rv$nuage_rose<- rv$str |>
+      ggplot(aes(x=carat, y=price)) + 
+      geom_point(
+        alpha = 1, 
+        color = "#ffbfcb") +
+      ggtitle(paste("prix:", input$price, " & color:", input$color))
     
-    output$DiamondsPlot <- plotly::renderPlotly({
-      rv$nuage
-    })
   })
+  
+  
+  output$DiamondsPlot <- plotly::renderPlotly({
+    if (is.null(rv$nuage_rose)) {
+      return(NULL)
+    }
+    if (rv$selection_couleur == "Oui") { 
+      rv$nuage_rose 
+    } else { 
+      rv$nuage_noir
+    }
+  })
+  
+  
 }
+
 
 shinyApp(ui = ui, server = server)
