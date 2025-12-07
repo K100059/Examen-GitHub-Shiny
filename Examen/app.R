@@ -6,28 +6,30 @@ library(DT)
 library(bslib)
 library(plotly)
 
+
 # UI ----
 ui <- fluidPage(
   
   theme = bs_theme(
-    version = 5,
-    bootswatch = "lumen"),
+    version = 5, 
+    bootswatch = "minty"),
   
   titlePanel("Exploration des Diamants"),
   
   sidebarLayout(
     sidebarPanel(
+      radioButtons(inputId = "rose",
+                   label = "Colorier les points en rose ?",
+                   choices = c("Oui","Non"),
+                   selected = "Oui",
+      ),
+      
       sliderInput("price",
                   "Prix maximum :",
                   min = 300,
                   max = 20000,
                   value = 5000),
       
-      radioButtons(inputId = "rose",
-                   label = "Colorier les points en rose ?",
-                   choices = c("Oui","Non"),
-                   selected = "Oui",
-      ),
       
       selectInput(inputId = "color",
                   label = "Choisir une couleur à filtrer :",
@@ -79,7 +81,6 @@ server <- function(input, output) {
     
   })
   
-  
   output$DiamondsPlot <- plotly::renderPlotly({
     if (is.null(rv$nuage_rose)) {
       return(NULL)
@@ -98,6 +99,5 @@ server <- function(input, output) {
   
   
 }
-
 
 shinyApp(ui = ui, server = server)
