@@ -55,7 +55,7 @@ server <- function(input, output) {
   
   observeEvent(input$bouton, {
     message(showNotification(
-      "La valeur du slider a changé !",
+      paste("prix:", input$price, " & color:", input$color),
       type = "message"
     ))
     
@@ -73,7 +73,7 @@ server <- function(input, output) {
     rv$nuage_rose<- rv$str |>
       ggplot(aes(x=carat, y=price)) + 
       geom_point(
-        alpha = 1, 
+        alpha = 0.5, 
         color = "#ffbfcb") +
       ggtitle(paste("prix:", input$price, " & color:", input$color))
     
@@ -89,6 +89,11 @@ server <- function(input, output) {
     } else { 
       rv$nuage_noir
     }
+  })
+  
+  
+  output$tableau <- renderDT({
+    rv$str
   })
   
   
